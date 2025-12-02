@@ -123,6 +123,73 @@ int main(void) {
 2. `eprom_write_byte()` ya incluye espera automática
 3. El tipo determina automáticamente si usa 1 o 2 bytes de dirección
 
+## Compilación
+
+### Compilar la librería
+
+```bash
+# Compilar eprom24c.c a objeto
+cl65 -t none -O --cpu 65c02 -c eprom24c.c -o eprom24c.o
+
+# O usando ca65 desde ensamblador pre-compilado
+ca65 --cpu 65c02 eprom24c.s -o eprom24c.o
+```
+
+### Integración en Makefile
+
+```makefile
+# Directorios
+LIBS_DIR = libs
+EPROM_DIR = $(LIBS_DIR)/eprom24c
+I2C_DIR = $(LIBS_DIR)/i2c
+
+# Archivos objeto de librerías
+LIB_OBJS = $(EPROM_DIR)/eprom24c.o $(I2C_DIR)/i2c.o
+
+# Flags del compilador
+CC = cl65
+CFLAGS = -t none -O --cpu 65c02
+
+# Regla para compilar eprom24c
+$(EPROM_DIR)/eprom24c.o: $(EPROM_DIR)/eprom24c.c $(EPROM_DIR)/eprom24c.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Regla para compilar i2c (dependencia)
+$(I2C_DIR)/i2c.o: $(I2C_DIR)/i2c.c $(I2C_DIR)/i2c.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Linkear con tu programa
+mi_programa.bin: main.o $(LIB_OBJS) vectors.o
+	ld65 -C config/fpga.cfg -o $@ $^
+```
+
+### Estructura de proyecto recomendada
+
+```
+mi_proyecto/
+├── libs/
+│   ├── i2c/
+│   │   ├── i2c.c
+│   │   └── i2c.h
+│   └── eprom24c/
+│       ├── eprom24c.c
+│       └── eprom24c.h
+├── src/
+│   └── main.c
+├── config/
+│   └── fpga.cfg
+└── makefile
+```
+
+### Include en tu código
+
+```c
+// Desde src/main.c
+#include "../libs/eprom24c/eprom24c.h"
+
+// La librería incluye automáticamente i2c.h
+```
+
 ## Compatibilidad
 
 - ✅ cc65 compiler
