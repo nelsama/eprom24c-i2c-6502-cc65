@@ -196,3 +196,9 @@ mi_proyecto/
 - ✅ C89 estándar
 - ✅ Usa librería I2C polling
 - ✅ 6502/65C02
+
+## Licencia
+
+Este proyecto está licenciado bajo los términos de la Licencia MIT. Para más información, consulta el archivo [LICENSE](./LICENSE).
+
+Más detalles sobre la Licencia MIT: https://opensource.org/licenses/MIT
